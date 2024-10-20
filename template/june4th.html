@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>June 4th</title>
+    <script src="../static/scripts/easeljs.min.js"></script>
+    <script src="../static/scripts/soundjs.min.js"></script>
+    <script src="../static/scripts/preloadjs.min.js"></script>
+    <script src="../static/scripts/Box2DWeb.min.js"></script>
+    <script src="../static/scripts/Vector2D.js"></script>
+    <script src="../static/scripts/june4th.js"></script>
+</head>
+<body style="text-align: center;">
+    <canvas id="canvas" width="1050" height="700" style="position: absolute;left: 0;top: 0;background-color:rgb(31, 45, 76);"></canvas>
+    <!-- <canvas id="physic" width="1050" height="700" style="position: absolute;left: 0;top: 0;"></canvas> -->
+    <div id="gradePanel" style="position: absolute;width: 300px;height: fit-content;color: white;text-align: left;user-select: none;opacity: 0;">
+        <div id="Score" style="float: left;width: 100%;text-align: left;margin-bottom: 10px;">Score:&nbsp;0</div>
+        <div id="Kill Soldiers" style="float: left;width: 100%;text-align: left;margin-bottom: 10px;">Kill Soldiers:&nbsp;0</div>
+        <div id="Kill Tanks" style="float: left;width: 100%;text-align: left;margin-bottom: 10px;">Kill Tanks:&nbsp;0</div>
+    </div>
+    <img id="waitPanel" src="../static/assets/wait.gif" style="position: absolute;user-select: none;">
+    <!-- begin panel -->
+    <div id="beginPanel" style="position: absolute;top:-300px;width: 300px;height: 250px;user-select: none;transition: top .2s;">
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_01.png');"></div>
+        <div style="float: left;width: 300px;height: fit-content;background-image: url('../static/assets/panel_02.png');">
+            <div style="color: rgb(231, 246, 255);font-size: 22px;font-weight: bolder;line-height: 40px;text-shadow:#0d1218 2px 2px 5px;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;margin-top: 10px;margin-bottom: 20px;">不惧奸邪<br>打倒共产党</div>
+            <div style="width: 100%;text-align: center;">
+                <div style="display: inline-block;width: 90px;height: 36px;background-image: url('../static/assets/button.png');background-repeat: no-repeat;text-align: center;color: rgb(231, 246, 255);font-weight: bold;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;padding-top: 9px;margin-left: 10px;margin-right: 10px;" >开始</div>
+            </div>
+        </div>
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_03.png');"></div>
+    </div>
+    <!-- paused panel -->
+    <div id="pausedPanel" style="position: absolute;top:-300px;width: 300px;height: 250px;user-select: none;transition: top .2s;">
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_01.png');"></div>
+        <div style="float: left;width: 300px;height: fit-content;background-image: url('../static/assets/panel_02.png');">
+            <div style="color: rgb(231, 246, 255);font-size: 22px;font-weight: bolder;line-height: 40px;text-shadow:#0d1218 2px 2px 5px;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;margin-top: 10px;margin-bottom: 20px;">革命尚未成功<br>再接再厉</div>
+            <div style="width: 100%;text-align: center;">
+                <div style="display: inline-block;width: 90px;height: 36px;background-image: url('../static/assets/button.png');background-repeat: no-repeat;text-align: center;color: rgb(231, 246, 255);font-weight: bold;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;padding-top: 9px;margin-left: 10px;margin-right: 10px;" onclick="continueGame()">继续</div>
+                <div style="display: inline-block;width: 90px;height: 36px;background-image: url('../static/assets/button.png');background-repeat: no-repeat;text-align: center;color: rgb(231, 246, 255);font-weight: bold;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;padding-top: 9px;margin-left: 10px;margin-right: 10px;" onclick="restartGame()">重试</div>
+            </div>
+        </div>
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_03.png');"></div>
+    </div>
+    <!-- failed panel -->
+    <div id="failedPanel" style="position: absolute;top:-300px;width: 300px;height: 250px;user-select: none;transition: top .2s;">
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_01.png');"></div>
+        <div style="float: left;width: 300px;height: fit-content;background-image: url('../static/assets/panel_02.png');">
+            <div style="color: rgb(231, 246, 255);font-size: 22px;font-weight: bolder;line-height: 40px;text-shadow:#0d1218 2px 2px 5px;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;margin-top: 10px;margin-bottom: 20px;">每一场反抗<br>都足以震慑暴君</div>
+            <div style="width: 100%;text-align: center;">
+                <div style="display: inline-block;width: 90px;height: 36px;background-image: url('../static/assets/button.png');background-repeat: no-repeat;text-align: center;color: rgb(231, 246, 255);font-weight: bold;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;padding-top: 9px;margin-left: 10px;margin-right: 10px;" onclick="restartGame()">重试</div>
+            </div>
+        </div>
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_03.png');"></div>
+    </div>
+    <!-- win panel -->
+    <div id="winPanel" style="position: absolute;top:-300px;width: 300px;height: 250px;user-select: none;transition: top .2s;">
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_01.png');"></div>
+        <div style="float: left;width: 300px;height: fit-content;background-image: url('../static/assets/panel_02.png');">
+            <div style="color: rgb(231, 246, 255);font-size: 22px;font-weight: bolder;line-height: 40px;text-shadow:#0d1218 2px 2px 5px;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;margin-top: 10px;margin-bottom: 20px;">长夜已尽<br>人民才是国家的主人</div>
+            <div style="width: 100%;text-align: center;">
+                <div style="display: inline-block;width: 90px;height: 36px;background-image: url('../static/assets/button.png');background-repeat: no-repeat;text-align: center;color: rgb(231, 246, 255);font-weight: bold;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;padding-top: 9px;margin-left: 10px;margin-right: 10px;" onclick="restartGame()">再战</div>
+            </div>
+        </div>
+        <div style="float: left;width: 300px;height: 32px;background-image: url('../static/assets/panel_03.png');"></div>
+    </div>
+    <script>
+        // set all panels's position
+        let waitPanel=document.getElementById('waitPanel');
+        waitPanel.style.top='300px';
+        waitPanel.style.left=(window.innerWidth-60)/2+'px';
+        let canvas=document.getElementById('canvas');
+        gradePanel=document.getElementById('gradePanel');
+        canvas.style.left=(window.innerWidth-1050)/2+'px';
+        gradePanel.style.left=(window.innerWidth-1050)/2+15+'px';
+        pausedPanel=document.getElementById('pausedPanel');
+        winPanel=document.getElementById('winPanel');
+        failedPanel=document.getElementById('failedPanel');
+        let beginPanel=document.getElementById('beginPanel');
+        beginPanel.style.left=pausedPanel.style.left=winPanel.style.left=failedPanel.style.left=(window.innerWidth-300)/2+'px';
+        // set fps and load resource
+        createjs.Ticker.setFPS(25);
+        preload=new createjs.LoadQueue();
+        preload.installPlugin(createjs.Sound);
+        preload.loadManifest([
+            {'id':'background','src':'../static/assets/background.png'},
+            {'id':'player','src':'../static/assets/player.png'},
+            {'id':'soldier','src':'../static/assets/soldier.png'},
+            {'id':'tank','src':'../static/assets/tank.png'},
+            {'id':'dengXiaoping','src':'../static/assets/dengXiaoping.png'},
+            {'id':'decoration','src':'../static/assets/decoration.png'},
+            {'id':'boom','src':'../static/assets/boom.png'},
+            {'id':'boomSound','src':'../static/assets/boom.mp3'},
+            {'id':'enemyHurt','src':'../static/assets/enemyHurt.mp3'},
+            {'id':'enemyDead','src':'../static/assets/enemyDead.mp3'},
+            {'id':'gameOver','src':'../static/assets/failed.mp3'},
+            {'id':'gameWin','src':'../static/assets/win.mp3'},
+            {'id':'hitFlag','src':'../static/assets/hitFlag.mp3'},
+            {'id':'shoot','src':'../static/assets/shoot.wav'},
+            {'id':'playerHurt','src':'../static/assets/playerHurt.mp3'},
+            {'id':'playerFire','src':'../static/assets/playerFire.mp3'},
+            {'id':'marseillaise','src':'../static/assets/marseillaise.wav'},
+        ]);
+        preload.on("complete",function(){
+            beginPanel.style.top='200px';
+            beginPanel.onclick=function(){
+                initGame();
+                createjs.Ticker.addEventListener('tick',update);
+                beginPanel.remove();
+                gradePanel.style.opacity=1;
+            }
+            waitPanel.remove();
+        });
+        // control move
+        window.addEventListener("keydown",evt=>{
+            evt.preventDefault();
+            if(finish)return;
+            // Prevent switching animations repeatedly
+            if(evt.keyCode===pressKey)return;
+            switch(evt.keyCode){
+                case 87:
+                    pressKey=evt.keyCode;
+                    player.setVelocity(0,-1);
+                    player.gotoAndPlay('moveUp');
+                    break;
+                case 83:
+                    pressKey=evt.keyCode;
+                    player.setVelocity(0,1);
+                    player.gotoAndPlay('moveDown');
+                    break;
+                case 65:
+                    pressKey=evt.keyCode;
+                    player.setVelocity(-1,0);
+                    player.gotoAndPlay('moveLeft');
+                    break;
+                case 68:
+                    pressKey=evt.keyCode;
+                    player.setVelocity(1,0);
+                    player.gotoAndPlay('moveRight');
+                    break;
+                case 27:
+                    backMusic.paused=true;
+                    paused=true;
+                    pausedPanel.style.top='200px';
+                    break;
+            }
+        });
+        window.addEventListener("keyup",evt=>{
+            evt.preventDefault();
+            if(evt.keyCode===pressKey){
+                pressKey='';
+                player.setVelocity(0,0);
+                player.gotoAndPlay(player.currentAnimation.replace('move','idle'));
+            }
+        });
+        // control fire
+        window.onmousedown=function(evt){
+            evt.preventDefault();
+            pressMouse=true;
+            player.fireTimer=0;
+        };
+        window.onmouseup=function(evt){
+            evt.preventDefault();
+            pressMouse=false;
+        };
+
+        // continue game
+        function continueGame(){
+            paused=false;
+            pausedPanel.style.top='-300px';
+            backMusic.play();
+        }
+
+        // restart game
+        function restartGame(){
+            pausedPanel.style.top=winPanel.style.top=failedPanel.style.top='-300px';
+            initGame();
+        }
+    </script>
+</body>
